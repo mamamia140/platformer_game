@@ -1,55 +1,92 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    public float moveSpeed = 5f;  // Speed at which the player moves
-    public float jumpForce = 5f;  // Force applied for jumping
+    [SerializeField]
+    float moveSpeed = 5f;
+    [SerializeField]
+    float jumpSpeed = 5f;
 
-    private Rigidbody2D rb;
-    private bool isGrounded;
+    [SerializeField]
+    float climbSpeed = 5f;
+
+    float defaultGravity;
+
+    Rigidbody2D rigidbody2D;
+
+    CapsuleCollider2D collider2D;
+
+    Animator animator;
+
+    UnityEngine.Vector2 moveInput;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rigidbody2D = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        collider2D = GetComponent<CapsuleCollider2D>();
+        defaultGravity = rigidbody2D.gravityScale;
     }
 
     void Update()
     {
-        // Horizontal movement
-        float moveX = Input.GetAxis("Horizontal");
-        Vector2 move = new Vector2(moveX * moveSpeed, rb.velocity.y);
-        rb.velocity = move;
+        Run();
+        FlipSprite();
+        ClimbLadder();
+    }
 
-        // Jumping
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-        {
-            Jump();
-        }
+    void OnMove(InputValue value)
+    {
+        moveInput = value.Get<UnityEngine.Vector2>();
+    }
 
-        // Flipping the player's direction based on movement
-        if (moveX > 0)
+    void OnJump(InputValue value)
+    {
+        if (value.isPressed && collider2D.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
-            transform.localScale = new Vector3(1, 1, 1);
-        }
-        else if (moveX < 0)
-        {
-            transform.localScale = new Vector3(-1, 1, 1);
+            rigidbody2D.velocity += new UnityEngine.Vector2(0f, jumpSpeed);
         }
     }
 
-    void Jump()
+    void Run()
     {
-        rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-        isGrounded = false;  // Prevent multiple jumps in the air
+        UnityEngine.Vector2 velocity = new UnityEngine.Vector2(moveInput.x * moveSpeed, rigidbody2D.velocity.y);
+        rigidbody2D.velocity = velocity;
+
+        bool playerHasHorizontalSpeed = Mathf.Abs(rigidbody2D.velocity.x) > Mathf.Epsilon;
+        animator.SetBool("isRunning", playerHasHorizontalSpeed);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void FlipSprite()
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        bool playerHasHorizontalSpeed = Mathf.Abs(rigidbody2D.velocity.x) > Mathf.Epsilon;
+
+        if (playerHasHorizontalSpeed)
         {
-            isGrounded = true;
+            transform.localScale = new UnityEngine.Vector2(Mathf.Sign(rigidbody2D.velocity.x), 1f);
+
+        }
+    }
+
+    void ClimbLadder()
+    {
+
+        if (collider2D.IsTouchingLayers(LayerMask.GetMask("Climbing")))
+        {
+
+            UnityEngine.Vector2 climbVelocity = new UnityEngine.Vector2(rigidbody2D.velocity.x, moveInput.y * climbSpeed);
+            rigidbody2D.velocity = climbVelocity;
+            rigidbody2D.gravityScale = 0;
+            bool playerHasVerticalSpeed = Mathf.Abs(rigidbody2D.velocity.y) > Mathf.Epsilon;
+            animator.SetBool("isClimbing", playerHasVerticalSpeed);
+
+        }
+        else
+        {
+            animator.SetBool("isClimbing", false);
+            rigidbody2D.gravityScale = defaultGravity;
         }
     }
 }
