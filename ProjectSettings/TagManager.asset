@@ -16,9 +16,9 @@ TagManager:
   - Player
   - Background
   - Bouncing
-  - 
-  - 
-  - 
+  - Enemies
+  - Hazard
+  - Projectile
   - 
   - 
   - 
@@ -41,4 +41,31 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 2724810769
+    locked: 0
+  - name: Water
+    uniqueID: 1618423349
+    locked: 0
+  - name: Ground
+    uniqueID: 16621525
+    locked: 0
+  - name: Hazards
+    uniqueID: 2654262993
+    locked: 0
+  - name: Climbing
+    uniqueID: 386351115
+    locked: 0
+  - name: Bouncing
+    uniqueID: 1413926003
+    locked: 0
+  - name: Enemies
+    uniqueID: 893245283
+    locked: 0
+  - name: Player
+    uniqueID: 3046154199
+    locked: 0
+  - name: Projectile
+    uniqueID: 364927431
     locked: 0

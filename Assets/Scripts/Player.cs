@@ -12,7 +12,19 @@ public class Player : MonoBehaviour
     [SerializeField]
     float climbSpeed = 5f;
 
+    [SerializeField]
+    float deathKick = 8f;
+
+    [SerializeField]
+    GameObject arrow;
+
+    [SerializeField]
+    GameObject weapon;
+
+
     float defaultGravity;
+
+    public bool isAlive = true;
 
     Rigidbody2D rigidbody2D;
 
@@ -35,9 +47,14 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (!isAlive)
+        {
+            return;
+        }
         Run();
         FlipSprite();
         ClimbLadder();
+        Die();
     }
 
     void OnMove(InputValue value)
@@ -47,14 +64,35 @@ public class Player : MonoBehaviour
 
     void OnJump(InputValue value)
     {
+        if (!isAlive)
+        {
+            return;
+        }
         if (value.isPressed && boxCollider2D.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             rigidbody2D.velocity += new UnityEngine.Vector2(0f, jumpSpeed);
         }
     }
 
+    void OnFire(InputValue value)
+    {
+        if (!isAlive)
+        {
+            return;
+        }
+
+        if (value.isPressed)
+        {
+            GameObject.Instantiate(arrow, weapon.transform.position, UnityEngine.Quaternion.identity);
+        }
+    }
+
     void Run()
     {
+        if (!isAlive)
+        {
+            return;
+        }
         UnityEngine.Vector2 velocity = new UnityEngine.Vector2(moveInput.x * moveSpeed, rigidbody2D.velocity.y);
         rigidbody2D.velocity = velocity;
 
@@ -76,6 +114,10 @@ public class Player : MonoBehaviour
     void ClimbLadder()
     {
 
+        if (!isAlive)
+        {
+            return;
+        }
         if (capsuleCollider2D.IsTouchingLayers(LayerMask.GetMask("Climbing")))
         {
 
@@ -91,5 +133,16 @@ public class Player : MonoBehaviour
             animator.SetBool("isClimbing", false);
             rigidbody2D.gravityScale = defaultGravity;
         }
+    }
+
+    void Die()
+    {
+        if (capsuleCollider2D.IsTouchingLayers(LayerMask.GetMask("Enemies, Hazard")) || boxCollider2D.IsTouchingLayers(LayerMask.GetMask("Enemies, Hazard")))
+        {
+            isAlive = false;
+            animator.SetTrigger("Dying");
+            rigidbody2D.velocity = new UnityEngine.Vector2(rigidbody2D.velocity.x * moveSpeed, deathKick);
+        }
+
     }
 }
