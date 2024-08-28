@@ -137,7 +137,8 @@ public class Player : MonoBehaviour
 
     void Die()
     {
-        if (capsuleCollider2D.IsTouchingLayers(LayerMask.GetMask("Enemies, Hazard")) || boxCollider2D.IsTouchingLayers(LayerMask.GetMask("Enemies, Hazard")))
+        if (capsuleCollider2D.IsTouchingLayers(LayerMask.GetMask("Enemies")) || boxCollider2D.IsTouchingLayers(LayerMask.GetMask("Enemies")) ||
+         capsuleCollider2D.IsTouchingLayers(LayerMask.GetMask("Hazard")) || boxCollider2D.IsTouchingLayers(LayerMask.GetMask("Hazard")))
         {
             isAlive = false;
             animator.SetTrigger("Dying");
