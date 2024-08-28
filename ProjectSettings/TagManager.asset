@@ -20,7 +20,7 @@ TagManager:
   - Hazard
   - Projectile
   - Exit
-  - 
+  - Pickable Objects
   - 
   - 
   - 
@@ -65,6 +65,9 @@ TagManager:
     locked: 0
   - name: Enemies
     uniqueID: 893245283
+    locked: 0
+  - name: Pickable Objects
+    uniqueID: 1277239193
     locked: 0
   - name: Player
     uniqueID: 3046154199
