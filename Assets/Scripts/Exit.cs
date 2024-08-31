@@ -12,7 +12,7 @@ public class Exit : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.IsTouchingLayers(LayerMask.GetMask("Player")))
+        if (other.tag == "Player")
         {
             int sceneNumber = SceneManager.GetActiveScene().buildIndex;
             StartCoroutine(IELoadTheLevel(sceneNumber + 1));
@@ -23,6 +23,7 @@ public class Exit : MonoBehaviour
     IEnumerator IELoadTheLevel(int sceneNumber)
     {
         yield return new WaitForSeconds(2f);
+        FindObjectOfType<ScenePersist>().ResetScenePersist();
         SceneManager.LoadScene(sceneNumber);
 
     }

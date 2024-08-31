@@ -29,7 +29,8 @@ public class GameSession : MonoBehaviour
         }
     }
 
-    void Start(){
+    void Start()
+    {
         livesText.text = playerLives.ToString();
         scoreText.text = score.ToString();
     }
@@ -46,7 +47,8 @@ public class GameSession : MonoBehaviour
         }
     }
 
-    public void AddToScore(int pointsToAdd){
+    public void AddToScore(int pointsToAdd)
+    {
         score += pointsToAdd;
         scoreText.text = score.ToString();
     }
@@ -60,7 +62,9 @@ public class GameSession : MonoBehaviour
 
     void ResetTheGame()
     {
+        FindObjectOfType<ScenePersist>().ResetScenePersist();
         SceneManager.LoadScene(0);
         Destroy(gameObject);
+
     }
 }
